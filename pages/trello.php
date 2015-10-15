@@ -9,24 +9,23 @@ function debug($a) {
 
 class LikeTrelloView {
 
+	var $severity = NULL;
+
+	function __construct() {
+		if (isset($_REQUEST['severity'])) {	// isset to allow empty
+			$this->severity = intval($_REQUEST['severity']);
+			$_SESSION[__CLASS__]['severity'] = $this->severity;
+		} else {
+			$this->severity = $_SESSION[__CLASS__]['severity'];
+		}
+	}
 
 	function render() {
 		$result = $this->performAction();
 		if ($result) {
 			echo $result;
 		} else {
-			html_page_top('Like Trello');
-			echo '<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">';
-			echo '<link rel="stylesheet" type="text/css" href="', plugin_file('trello.css'), '"/>';
-
-			echo '<div class="trello ui-helper-clearfix" id="reloadTarget">';
-			echo $this->renderLists();
-			echo '</div>';
-
-			echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>';
-			echo '<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>';
-			echo '<script src="plugins/LikeTrello/pages/' . ('trello.js') . '"></script>';
-			html_page_bottom();
+			require 'trello.phtml';
 		}
 	}
 
@@ -58,11 +57,17 @@ class LikeTrelloView {
 		$t_bug_table = db_get_table('mantis_bug_table');
 		$t_user_id = auth_get_current_user_id();
 		$specific_where = helper_project_specific_where($t_project_id, $t_user_id);
+		if ($this->severity) {
+			$severityCond = '= '.$this->severity;
+		} else {
+			$severityCond = '> -1';
+		}
 
 		$query = "SELECT *
 			FROM $t_bug_table
 			WHERE $specific_where
 			AND status = $status
+			AND severity $severityCond
 			ORDER BY last_updated DESC
 			LIMIT 20";
 		$result = db_query_bound($query);
