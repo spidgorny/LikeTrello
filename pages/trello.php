@@ -38,7 +38,7 @@ class LikeTrelloView {
 
 		foreach ($t_status_array as $status => $statusCode) {
 			$issues = $this->renderIssues($status);
-			$statusName = string_display_line( get_enum_element( 'status', $status ) );
+			$statusName = $this->getStatusName($status);
 			$content .= '<div class="column">
 				<div class="inside"
 				style="background-color: '.get_status_color($status).'"
@@ -112,6 +112,24 @@ class LikeTrelloView {
 		//$content = 'Status must be updated.';
 		$content .= $this->renderLists();
 		return $content;
+	}
+
+	function getStatusName($status) {
+		if (helper_get_current_project() == 20) {
+			$map = array(
+				10 => 'New (ideas)',
+				20 => 'Active',
+				50 => 'Less active',
+				80 => 'Recently done',
+				85 => 'Done',
+				90 => 'Dead',
+			);
+			$name = $map[$status];
+		} else {
+			$element = get_enum_element('status', $status);
+			$name = string_display_line($element);
+		}
+		return $name;
 	}
 
 }
