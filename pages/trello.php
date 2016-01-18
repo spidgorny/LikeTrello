@@ -1,5 +1,4 @@
 <?php
-
 define('BR', "<br />\n");
 function debug($a) {
 	echo '<pre>';
@@ -39,9 +38,10 @@ class LikeTrelloView {
 		foreach ($t_status_array as $status => $statusCode) {
 			$issues = $this->renderIssues($status);
 			$statusName = string_display_line( get_enum_element( 'status', $status ) );
+
+			$statusStyle = html_get_status_css_class( $status, auth_get_current_user_id(), helper_get_current_project() );
 			$content .= '<div class="column">
-				<div class="inside"
-				style="background-color: '.get_status_color($status).'"
+				<div class="inside ' . $statusStyle . '"
 				id="'.$status.'">
 				<h2 title="'.$status.'">' . $statusName . ' ('.sizeof($issues).')</h2>';
 			$content .= implode("\n", $issues);
