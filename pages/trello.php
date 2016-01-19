@@ -210,7 +210,7 @@ class LikeTrelloView {
 			AND status != $resolved
 			AND handler_id $handlerCond
 			";
-		echo $query, BR;
+		//echo $query, BR;
 // 		exit();
 		$result = db_query_bound($query);
 		$category_count = db_num_rows($result);
