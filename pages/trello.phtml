@@ -6,7 +6,9 @@
 	<label>Severity:
 		<select name="severity">
 			<option></option>
-			<?php print_enum_string_option_list( 'severity', $this->severity ); ?>
+			<?php
+			$this->print_enum_string_option_list_with_count( 'severity', $this->severity );
+			?>
 		</select>
 	</label>
 	<label>Assigned:

@@ -167,6 +167,56 @@ class LikeTrelloView {
 		return $name;
 	}
 
+	function print_enum_string_option_list_with_count( $p_enum_name, $p_val = 0 ) {
+		$t_config_var_name = $p_enum_name . '_enum_string';
+		$t_config_var_value = config_get( $t_config_var_name );
+
+		if( is_array( $p_val ) ) {
+			$t_val = $p_val;
+		} else {
+			$t_val = (int)$p_val;
+		}
+
+		$t_enum_values = MantisEnum::getValues( $t_config_var_value );
+
+		foreach ( $t_enum_values as $t_key ) {
+			$t_elem2 = get_enum_element( $p_enum_name, $t_key );
+
+			$t_elem2 .= ' ('.$this->getCountBySeverity($t_key).')';
+
+			echo '<option value="' . $t_key . '"';
+			check_selected( $t_val, $t_key );
+			echo '>' . string_html_specialchars( $t_elem2 ) . '</option>';
+		}
+	}
+
+	function getCountBySeverity($severity) {
+		$t_project_id = helper_get_current_project();
+		$t_bug_table = db_get_table('mantis_bug_table');
+		$t_user_id = auth_get_current_user_id();
+		$specific_where = helper_project_specific_where($t_project_id, $t_user_id);
+		$closed = CLOSED;
+		$resolved = RESOLVED;
+		if ($this->handler) {
+			$handlerCond = '= '.$this->handler;
+		} else {
+			$handlerCond = '> -1';
+		}
+		$query = "SELECT *
+			FROM $t_bug_table
+			WHERE $specific_where
+			AND severity = $severity
+			AND status != $closed
+			AND status != $resolved
+			AND handler_id $handlerCond
+			";
+		echo $query, BR;
+// 		exit();
+		$result = db_query_bound($query);
+		$category_count = db_num_rows($result);
+		return $category_count;
+	}
+
 }
 
 $ltv = new LikeTrelloView();
