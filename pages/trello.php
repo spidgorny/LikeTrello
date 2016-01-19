@@ -1,22 +1,40 @@
 <?php
 
 define('BR', "<br />\n");
+
 function debug($a) {
 	echo '<pre>';
 	var_dump($a);
 	echo '</pre>';
 }
 
+function ifsetor(&$variable, $default = null) {
+	if (isset($variable)) {
+		$tmp = $variable;
+	} else {
+		$tmp = $default;
+	}
+	return $tmp;
+}
+
 class LikeTrelloView {
 
 	var $severity = NULL;
 
+	var $handler = 0;
+
 	function __construct() {
-		if (isset($_REQUEST['severity'])) {	// isset to allow empty
-			$this->severity = intval($_REQUEST['severity']);
-			$_SESSION[__CLASS__]['severity'] = $this->severity;
+		//debug($_SESSION[__CLASS__]);
+		$this->importParam('severity');
+		$this->importParam('handler', 0);
+	}
+
+	function importParam($paramName, $default = NULL) {
+		if (isset($_REQUEST[$paramName])) {	// isset to allow empty
+			$this->$paramName = intval($_REQUEST[$paramName]);
+			$_SESSION[__CLASS__][$paramName] = $this->$paramName;
 		} else {
-			$this->severity = $_SESSION[__CLASS__]['severity'];
+			$this->$paramName = ifsetor($_SESSION[__CLASS__][$paramName], $default);
 		}
 	}
 
@@ -38,12 +56,20 @@ class LikeTrelloView {
 
 		foreach ($t_status_array as $status => $statusCode) {
 			$issues = $this->renderIssues($status);
-			$statusName = string_display_line( get_enum_element( 'status', $status ) );
 
-			$statusStyle = html_get_status_css_class( $status, auth_get_current_user_id(), helper_get_current_project() );
+			if (function_exists('html_get_status_css_class')) {
+				$statusStyle = html_get_status_css_class($status,
+					auth_get_current_user_id(),
+					helper_get_current_project());
+				$statusColor = '';
+			} else {
+				$statusStyle = '';
+				$statusColor = get_status_color($status);
+			}
 			$statusName = $this->getStatusName($status);
 			$content .= '<div class="column">
 				<div class="inside ' . $statusStyle . '"
+				style="background-color: '.$statusColor.'"
 				id="'.$status.'">
 				<h2 title="'.$status.'">' . $statusName . ' ('.sizeof($issues).')</h2>';
 			$content .= implode("\n", $issues);
@@ -64,14 +90,21 @@ class LikeTrelloView {
 		} else {
 			$severityCond = '> -1';
 		}
+		if ($this->handler) {
+			$handlerCond = '= '.$this->handler;
+		} else {
+			$handlerCond = '> -1';
+		}
 
 		$query = "SELECT *
 			FROM $t_bug_table
 			WHERE $specific_where
 			AND status = $status
 			AND severity $severityCond
+			AND handler_id $handlerCond
 			ORDER BY last_updated DESC
 			LIMIT 20";
+//		echo $query, BR; exit();
 		$result = db_query_bound($query);
 		$category_count = db_num_rows($result);
 		for ($i = 0; $i < $category_count; $i++) {

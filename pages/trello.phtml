@@ -3,10 +3,20 @@
 
 <form>
 	<input type="hidden" name="page" value="LikeTrello/trello" />
-	<label>Severity
+	<label>Severity:
 		<select name="severity">
 			<option></option>
 			<?php print_enum_string_option_list( 'severity', $this->severity ); ?>
+		</select>
+	</label>
+	<label>Assigned:
+		<select name="handler">
+			<option></option>
+			<?php print_assign_to_option_list(
+				$this->handler,
+				helper_get_current_project()
+			);
+			?>
 		</select>
 	</label>
 	<input type="submit" value="Filter" />
