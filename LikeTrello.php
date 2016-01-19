@@ -12,7 +12,7 @@ class LikeTrelloPlugin extends MantisPlugin {
 
 		$this->version = '1.0a';
 		$this->requires = array(
-			'MantisCore' => '1.2.0',
+			'MantisCore' => '1.3.0',
 		);
 
 		$this->author = 'Slawa';
