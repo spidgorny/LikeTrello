@@ -102,7 +102,7 @@ class LikeTrelloView {
 			AND status = $status
 			AND severity $severityCond
 			AND handler_id $handlerCond
-			ORDER BY last_updated DESC
+			ORDER BY severity DESC, last_updated DESC
 			LIMIT 20";
 //		echo $query, BR; exit();
 		$result = db_query_bound($query);
@@ -117,6 +117,7 @@ class LikeTrelloView {
 			<div class="portlet-content">' .
 				($row['reporter_id'] ? 'Reporter: ' . user_get_name($row['reporter_id']) . BR : '') .
 				($row['handler_id'] ? 'Assigned: ' . user_get_name($row['handler_id']) . BR : '') .
+				($row['severity'] ? 'Severity: ' . get_enum_element('severity', $row['severity']) . BR : '') .
 				'</div></div>';
 		}
 		if ($row) {

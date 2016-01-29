@@ -57,3 +57,7 @@ body {
 .trello * {
 	box-sizing: border-box;
 }
+
+#content {
+	padding: 0;
+}
