@@ -19,7 +19,7 @@ class LikeTrelloPlugin extends MantisPlugin {
 
 		$this->author = 'Slawa';
 		$this->contact = 'spidgorny@gmail.com';
-		$this->url = '';
+		$this->url = 'https://github.com/spidgorny/LikeTrello';
 	}
 
 	function events() {
@@ -45,7 +45,18 @@ class LikeTrelloPlugin extends MantisPlugin {
 	function addMenu($event_name, $param) {
 		//echo __METHOD__, '<br />', PHP_EOL;
 		if (MANTIS_VERSION >= '2.0') {
-			return plugin_page('trello', true);
+			return [
+				(object) [
+					'href' => plugin_page('trello', true),
+					'name' => $s_plugin_like_trello_title,
+					'icon' => 'fa-trello',
+				],
+				(object) [
+					'href' => plugin_page('trello-priority', true),
+					'name' => $s_plugin_like_trello_priority,
+					'icon' => 'fa-trello',
+				],
+			];
 		} else {
 			return '<a href="' .
 			plugin_page('trello') .

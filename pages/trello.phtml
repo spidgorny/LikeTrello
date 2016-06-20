@@ -1,11 +1,12 @@
 <?php
+/** @var $this LikeTrelloPriority */
 layout_page_header('Like Trello');
 layout_page_begin();
 ?>
 <link rel="stylesheet" type="text/css" href="<?= plugin_file('trello.css')?>"/>
 
 <form>
-	<input type="hidden" name="page" value="LikeTrello/trello" />
+	<input type="hidden" name="page" value="<?= $this->selfLink ?>" />
 	<label>Severity:
 		<select name="severity">
 			<option></option>
@@ -27,7 +28,8 @@ layout_page_begin();
 	<input type="submit" value="Filter" />
 </form>
 
-<div class="trello ui-helper-clearfix" id="reloadTarget">
+<div class="trello ui-helper-clearfix" id="reloadTarget"
+	 data-href="<?= $this->selfLink ?>">
 	<?= $this->renderLists(); ?>
 </div>
 

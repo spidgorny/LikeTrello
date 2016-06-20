@@ -14,8 +14,9 @@ function initSortable() {
 			console.log(event, ui, $(event.target).prop('id'),
 				ui.item.prop('id'),
 				ui.item.closest('.inside').prop('id'));
-			$('#reloadTarget').load('plugin.php', {
-				page: 'LikeTrello/trello',
+			var $reloadTarget = $('#reloadTarget');
+			$reloadTarget.load('plugin.php', {
+				page: $reloadTarget.attr('data-href'),
 				action: 'move',
 				issue: ui.item.prop('id'),
 				from: $(event.target).prop('id'),

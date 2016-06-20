@@ -1,0 +1,4 @@
+<?php
+
+$s_plugin_like_trello_title = 'Like Trello';
+$s_plugin_like_trello_priority = 'Trello by Priority';
