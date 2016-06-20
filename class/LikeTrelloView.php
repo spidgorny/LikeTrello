@@ -1,6 +1,6 @@
 <?php
 
-class LikeTrelloView {
+class LikeTrelloView extends AppController {
 
 	var $selfLink = 'LikeTrello/trello';
 
@@ -12,24 +12,6 @@ class LikeTrelloView {
 		//debug($_SESSION[__CLASS__]);
 		$this->importParam('severity');
 		$this->importParam('handler', 0);
-	}
-
-	function importParam($paramName, $default = NULL) {
-		if (isset($_REQUEST[$paramName])) {	// isset to allow empty
-			$this->$paramName = intval($_REQUEST[$paramName]);
-			$_SESSION[__CLASS__][$paramName] = $this->$paramName;
-		} else {
-			$this->$paramName = ifsetor($_SESSION[__CLASS__][$paramName], $default);
-		}
-	}
-
-	function render() {
-		$result = $this->performAction();
-		if ($result) {
-			echo $result;
-		} else {
-			require 'trello.phtml';
-		}
 	}
 
 	function renderLists() {
@@ -117,20 +99,6 @@ class LikeTrelloView {
 				($row['severity'] ? 'Severity: ' . get_enum_element('severity', $row['severity']) . BR : '') .
 				'</div></div>';
 		}
-		if ($row) {
-			//pre_var_dump(array_keys($row));
-		}
-		return $content;
-	}
-
-	function performAction() {
-		$content = NULL;
-		if ($action = $_REQUEST['action']) {
-			$method = $action.'Action';
-			if (method_exists($this, $method)) {
-				$content = $this->$method();
-			}
-		}
 		return $content;
 	}
 
@@ -138,6 +106,7 @@ class LikeTrelloView {
 		$content = '';
 		//debug($_REQUEST);
 		$f_bug_id = gpc_get_int( 'issue' );
+		/** @var BugData $t_bug_data */
 		$t_bug_data = bug_get( $f_bug_id, true );
 		$t_bug_data->status	= gpc_get_int( 'to', $t_bug_data->status );
 		$t_bug_data->update( true, true );
@@ -213,6 +182,20 @@ class LikeTrelloView {
 		$result = db_query_bound($query);
 		$category_count = db_num_rows($result);
 		return $category_count;
+	}
+
+	function addIssueAction($summary) {
+		$t_bug_data = new BugData;
+		$t_bug_data->project_id = helper_get_current_project();
+		$t_bug_data->reporter_id = auth_get_current_user_id();
+		$t_bug_data->category_id = 36;
+		$t_bug_data->summary = $summary;
+		$t_bug_data->description = '.';
+		$id = $t_bug_data->create();
+		if ($id) {
+			html_meta_redirect('plugin.php?page='.$this->selfLink);
+			exit();
+		}
 	}
 
 }

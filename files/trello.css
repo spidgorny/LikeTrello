@@ -57,6 +57,7 @@ body {
 	padding-top: 0.5em;
 	padding-left: 0.25em;
 	padding-right: 0.25em;
+	padding-bottom: 1em;
 }
 .trello * {
 	box-sizing: border-box;
@@ -64,4 +65,39 @@ body {
 
 #content {
 	padding: 0;
+}
+
+.btn-floating {
+	display: inline-block;
+	color: #fff;
+	position: fixed;
+	overflow: hidden;
+	z-index: 1;
+	width: 55.5px;
+	height: 55.5px;
+	line-height: 37px;
+	padding: 7px 15px;
+	background-color: #a6c;
+	border-radius: 50%;
+	transition: .3s;
+	vertical-align: middle;
+	margin: 10px;
+	cursor: pointer;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16),0 2px 10px 0 rgba(0,0,0,.12);
+	/*background-color: #F44336 !important;*/
+	-webkit-tap-highlight-color: transparent;
+	text-decoration: none;
+	touch-action: manipulation;
+	font-size: 3rem;
+}
+.btn-floating:hover {
+	color: white;
+	box-shadow: 0 5px 11px 0 rgba(0,0,0,.18),0 4px 15px 0 rgba(0,0,0,.15);
+}
+
+#add-issue {
+	display: none;
+}
+#add-issue textarea {
+	font-family: monospace !important;
 }

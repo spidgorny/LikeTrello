@@ -33,6 +33,20 @@ layout_page_begin();
 	<?= $this->renderLists(); ?>
 </div>
 
+<a class="btn-floating btn-large waves-effect waves-light"
+style="bottom: 45px; right: 24px;">
+	<i class="fa fa-pencil"></i>
+</a>
+
+<form id="add-issue">
+	<input type="hidden" name="page" value="<?= $this->selfLink?>" />
+	<input type="hidden" name="action" value="addIssue" />
+	<textarea name="summary" placeholder="Summary"
+			  style="width: 100%" rows="10"
+	></textarea>
+<!--	<input type="submit" value="Submit" />-->
+</form>
+
 <script src="<?php echo plugin_file( 'trello.js' ) ?>"></script>
 <?php
 layout_page_end();
