@@ -1,4 +1,7 @@
-<?php html_page_top('Like Trello'); ?>
+<?php
+layout_page_header('Like Trello');
+layout_page_begin();
+?>
 <link rel="stylesheet" type="text/css" href="<?= plugin_file('trello.css')?>"/>
 
 <form>
@@ -29,4 +32,6 @@
 </div>
 
 <script src="<?php echo plugin_file( 'trello.js' ) ?>"></script>
-<?php html_page_bottom(); ?>
+<?php
+layout_page_end();
+?>

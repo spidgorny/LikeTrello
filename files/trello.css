@@ -12,7 +12,7 @@ body {
 	min-width: 520px;
 }
 .column {
-	width: 16.5%;
+	width: 16.666%;
 	float: left;
 }
 .column .inside {
@@ -53,6 +53,9 @@ body {
 
 .trello {
 	background: #0E74AF;
+	padding-top: 0.5em;
+	padding-left: 0.25em;
+	padding-right: 0.25em;
 }
 .trello * {
 	box-sizing: border-box;
