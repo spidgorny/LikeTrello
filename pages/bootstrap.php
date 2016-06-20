@@ -25,3 +25,4 @@ function pre_var_dump($a) {
 
 require_once 'LikeTrelloView.php';
 require_once 'LikeTrelloPriority.php';
+require_once 'LikeTrelloSeverity.php';

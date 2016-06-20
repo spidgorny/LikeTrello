@@ -109,7 +109,8 @@ class LikeTrelloView {
 			$content[] = '<div class="portlet ui-helper-clearfix" id="'.$row['id'].'">
 			<div class="portlet-header">' .
 				string_get_bug_view_link($row['id']) . ': ' .
-				$row['summary'] . '</div>
+				htmlspecialchars($row['summary']) .
+			'</div>
 			<div class="portlet-content">' .
 				($row['reporter_id'] ? 'Reporter: ' . user_get_name($row['reporter_id']) . BR : '') .
 				($row['handler_id'] ? 'Assigned: ' . user_get_name($row['handler_id']) . BR : '') .

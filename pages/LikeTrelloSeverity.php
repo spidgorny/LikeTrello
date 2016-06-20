@@ -1,8 +1,8 @@
 <?php
 
-class LikeTrelloPriority extends LikeTrelloView {
+class LikeTrelloSeverity extends LikeTrelloView {
 
-	var $selfLink = 'LikeTrello/trello-priority';
+	var $selfLink = 'LikeTrello/trello-severity';
 
 	var $queryByPriority = [];
 
@@ -10,17 +10,17 @@ class LikeTrelloPriority extends LikeTrelloView {
 
 	function renderLists() {
 		$content = '';
-		$priority_codes = config_get('priority_enum_string');
-		$t_status_array = MantisEnum::getAssocArrayIndexedByValues($priority_codes);
+		$severity_codes = config_get('severity_enum_string');
+		$t_status_array = MantisEnum::getAssocArrayIndexedByValues($severity_codes);
 		$t_status_array = array_reverse($t_status_array, true);
-		//pre_var_dump($priority_codes);
+		//pre_var_dump($severity_codes);
 		//pre_var_dump($t_status_array);
 
 		foreach ($t_status_array as $priority => $priorityCode) {
-			$issues = $this->fetchIssuesByPriority($priority);
+			$issues = $this->fetchIssuesBySeverity($priority);
 			$issues = $this->renderIssuesWithColor($issues);
 
-			$statusName = $this->getPriorityName($priority);
+			$statusName = $this->getSeverityName($priority);
 			$content .= '<div class="column">
 				<div class="inside"
 				id="'.$priority.'"
@@ -30,15 +30,15 @@ class LikeTrelloPriority extends LikeTrelloView {
 				' <small>('.sizeof($issues).')</small></h2>';
 			$content .= implode("\n", $issues);
 
-			//$content .= $this->queryByPriority[$priority];
-			//$content .= ': '.$this->countByPriority[$priority];
+//			$content .= $this->queryByPriority[$priority];
+//			$content .= ': '.$this->countByPriority[$priority];
 			$content .='</div>';  // inside
 			$content .='</div>';  // column
 		}
 		return $content;
 	}
 
-	function fetchIssuesByPriority($priority) {
+	function fetchIssuesBySeverity($severity) {
 		$t_project_id = helper_get_current_project();
 		$t_bug_table = db_get_table('mantis_bug_table');
 		$t_user_id = auth_get_current_user_id();
@@ -57,16 +57,16 @@ class LikeTrelloPriority extends LikeTrelloView {
 		$query = "SELECT *
 			FROM $t_bug_table
 			WHERE $specific_where
-			AND priority = $priority
+			AND severity = $severity
 			AND severity $severityCond
 			AND handler_id $handlerCond
 			ORDER BY severity DESC, last_updated DESC
 			LIMIT 20";
 //		echo $query, BR; exit();
-		$this->queryByPriority[$priority] = $query;
+		$this->queryByPriority[$severity] = $query;
 		$result = db_query($query);
 		$category_count = db_num_rows($result);
-		$this->countByPriority[$priority] = $category_count;
+		$this->countByPriority[$severity] = $category_count;
 
 		$issues = [];
 		for ($i = 0; $i < $category_count; $i++) {
@@ -110,7 +110,7 @@ class LikeTrelloPriority extends LikeTrelloView {
 		$f_bug_id = gpc_get_int( 'issue' );
 		/** @var BugData $t_bug_data */
 		$t_bug_data = bug_get( $f_bug_id, true );
-		$t_bug_data->priority = gpc_get_int( 'to', $t_bug_data->priority );
+		$t_bug_data->severity = gpc_get_int( 'to', $t_bug_data->severity );
 		$t_bug_data->update( true, true );
 		//header('Location: '.plugin_page('trello'));
 		//$content = 'Status must be updated.';
@@ -118,8 +118,8 @@ class LikeTrelloPriority extends LikeTrelloView {
 		return $content;
 	}
 
-	function getPriorityName($status) {
-		$element = get_enum_element('priority', $status);
+	function getSeverityName($status) {
+		$element = get_enum_element('severity', $status);
 		$name = string_display_line($element);
 		return $name;
 	}

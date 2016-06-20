@@ -56,6 +56,11 @@ class LikeTrelloPlugin extends MantisPlugin {
 					'name' => $s_plugin_like_trello_priority,
 					'icon' => 'fa-trello',
 				],
+				(object) [
+					'href' => plugin_page('trello-severity', true),
+					'name' => $s_plugin_like_trello_serverity,
+					'icon' => 'fa-trello',
+				],
 			];
 		} else {
 			return '<a href="' .
