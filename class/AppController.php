@@ -4,7 +4,11 @@ class AppController {
 
 	function importParam($paramName, $default = NULL) {
 		if (isset($_REQUEST[$paramName])) {	// isset to allow empty
-			$this->$paramName = intval($_REQUEST[$paramName]);
+			if (is_array($this->$paramName)) {
+				$this->$paramName = (array)$_REQUEST[$paramName];
+			} else {
+				$this->$paramName = intval($_REQUEST[$paramName]);
+			}
 			$_SESSION[__CLASS__][$paramName] = $this->$paramName;
 		} else {
 			$this->$paramName = ifsetor($_SESSION[__CLASS__][$paramName], $default);

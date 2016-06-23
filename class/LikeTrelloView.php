@@ -8,16 +8,24 @@ class LikeTrelloView extends AppController {
 
 	var $handler = 0;
 
+	var $status = [];
+
 	function __construct() {
 		//debug($_SESSION[__CLASS__]);
 		$this->importParam('severity');
 		$this->importParam('handler', 0);
+		$this->importParam('status', []);
+	}
+
+	function getStatuses() {
+		$status_codes = config_get('status_enum_string');
+		$t_status_array = MantisEnum::getAssocArrayIndexedByValues($status_codes);
+		return $t_status_array;
 	}
 
 	function renderLists() {
 		$content = '';
-		$status_codes = config_get('status_enum_string');
-		$t_status_array = MantisEnum::getAssocArrayIndexedByValues($status_codes);
+		$t_status_array = $this->getStatuses();
 		//pre_var_dump($status_codes);
 		//pre_var_dump($t_status_array);
 
@@ -47,27 +55,32 @@ class LikeTrelloView extends AppController {
 		return $content;
 	}
 
-	function fetchIssuesByStatus($status) {
-		$content = array();
+	function fetchIssues($where) {
 		$t_project_id = helper_get_current_project();
 		$t_bug_table = db_get_table('mantis_bug_table');
 		$t_user_id = auth_get_current_user_id();
 		$specific_where = helper_project_specific_where($t_project_id, $t_user_id);
+
 		if ($this->severity) {
 			$severityCond = '= ' . $this->severity;
 		} else {
 			$severityCond = '> -1';
 		}
+
 		if ($this->handler) {
 			$handlerCond = '= ' . $this->handler;
 		} else {
 			$handlerCond = '> -1';
 		}
 
+		if ($this->status) {
+			$where .= ' AND status IN (' . implode(', ', $this->status).')';
+		}
+
 		$query = "SELECT *
 			FROM $t_bug_table
 			WHERE $specific_where
-			AND status = $status
+			AND $where
 			AND severity $severityCond
 			AND handler_id $handlerCond
 			ORDER BY severity DESC, last_updated DESC
@@ -82,6 +95,10 @@ class LikeTrelloView extends AppController {
 			$issues[$row['id']] = $row;
 		}
 		return $issues;
+	}
+
+	function fetchIssuesByStatus($status) {
+		return $this->fetchIssues("status = $status");
 	}
 
 	function renderIssues(array $issues) {

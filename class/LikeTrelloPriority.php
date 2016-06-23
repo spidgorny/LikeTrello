@@ -39,41 +39,7 @@ class LikeTrelloPriority extends LikeTrelloView {
 	}
 
 	function fetchIssuesByPriority($priority) {
-		$t_project_id = helper_get_current_project();
-		$t_bug_table = db_get_table('mantis_bug_table');
-		$t_user_id = auth_get_current_user_id();
-		$specific_where = helper_project_specific_where($t_project_id, $t_user_id);
-		if ($this->severity) {
-			$severityCond = '= '.$this->severity;
-		} else {
-			$severityCond = '> -1';
-		}
-		if ($this->handler) {
-			$handlerCond = '= '.$this->handler;
-		} else {
-			$handlerCond = '> -1';
-		}
-
-		$query = "SELECT *
-			FROM $t_bug_table
-			WHERE $specific_where
-			AND priority = $priority
-			AND severity $severityCond
-			AND handler_id $handlerCond
-			ORDER BY severity DESC, last_updated DESC
-			LIMIT 20";
-//		echo $query, BR; exit();
-		$this->queryByPriority[$priority] = $query;
-		$result = db_query($query);
-		$category_count = db_num_rows($result);
-		$this->countByPriority[$priority] = $category_count;
-
-		$issues = [];
-		for ($i = 0; $i < $category_count; $i++) {
-			$row = db_fetch_array($result);
-			$issues[$row['id']] = $row;
-		}
-		return $issues;
+		return $this->fetchIssues("priority = $priority");
 	}
 
 	function renderIssuesWithColor(array $issues) {

@@ -25,6 +25,15 @@ layout_page_begin();
 			?>
 		</select>
 	</label>
+	<?php
+	foreach ($this->getStatuses() as $id => $code) {
+		echo '<label>
+			<input type="checkbox" name="status['.$id.']" value="'.$id.'"
+			'.($this->status[$id] ? 'checked' : '').' /> '.$code.'
+		</label>
+		';
+	}
+	?>
 	<input type="submit" value="Filter" />
 </form>
 
