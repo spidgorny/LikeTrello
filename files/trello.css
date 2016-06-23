@@ -101,3 +101,7 @@ body {
 #add-issue textarea {
 	font-family: monospace !important;
 }
+
+label.status {
+	padding: 0.25em 0.5em;
+}

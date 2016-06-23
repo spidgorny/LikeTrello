@@ -27,7 +27,7 @@ layout_page_begin();
 	</label>
 	<?php
 	foreach ($this->getStatuses() as $id => $code) {
-		echo '<label>
+		echo '<label class="status '.$this->getStatusClass($id).'">
 			<input type="checkbox" name="status['.$id.']" value="'.$id.'"
 			'.($this->status[$id] ? 'checked' : '').' /> '.$code.'
 		</label>

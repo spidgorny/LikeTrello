@@ -32,20 +32,11 @@ class LikeTrelloView extends AppController {
 		foreach ($t_status_array as $status => $statusCode) {
 			$issues = $this->fetchIssuesByStatus($status);
 			$issues = $this->renderIssues($issues);
-
-			if (function_exists('html_get_status_css_class')) {
-				$statusStyle = html_get_status_css_class($status,
-					auth_get_current_user_id(),
-					helper_get_current_project());
-				$statusColor = '';
-			} else {
-				$statusStyle = '';
-				$statusColor = get_status_color($status);
-			}
 			$statusName = $this->getStatusName($status);
+
 			$content .= '<div class="column">
-				<div class="inside ' . $statusStyle . '"
-				style="background-color: '.$statusColor.'"
+				<div class="inside ' . $this->getStatusClass($status) . '"
+				style="background-color: '.$this->getStatusColor($status).'"
 				id="'.$status.'">
 				<h2 title="'.$status.'">' . $statusName . ' ('.sizeof($issues).')</h2>';
 			$content .= implode("\n", $issues);
@@ -53,6 +44,21 @@ class LikeTrelloView extends AppController {
 			$content .='</div>';  // column
 		}
 		return $content;
+	}
+
+	function getStatusClass($status) {
+		$statusStyle = '';
+		if (function_exists('html_get_status_css_class')) {
+			$statusStyle = html_get_status_css_class($status,
+				auth_get_current_user_id(),
+				helper_get_current_project());
+		}
+		return $statusStyle;
+	}
+
+	function getStatusColor($status) {
+		$statusColor = get_status_color($status);
+		return $statusColor;
 	}
 
 	function fetchIssues($where) {
