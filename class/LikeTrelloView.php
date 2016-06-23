@@ -207,7 +207,11 @@ class LikeTrelloView extends AppController {
 		$t_bug_data->reporter_id = auth_get_current_user_id();
 		$t_bug_data->category_id = 36;
 		$t_bug_data->summary = $summary;
-		$t_bug_data->description = '.';
+		if (strlen($summary) <= 128) {
+			$t_bug_data->description = '.';
+		} else {
+			$t_bug_data->description = $summary;
+		}
 		$id = $t_bug_data->create();
 		if ($id) {
 			html_meta_redirect('plugin.php?page='.$this->selfLink);
