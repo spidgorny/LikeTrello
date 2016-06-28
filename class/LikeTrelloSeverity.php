@@ -18,7 +18,7 @@ class LikeTrelloSeverity extends LikeTrelloView {
 
 		foreach ($t_status_array as $priority => $priorityCode) {
 			$issues = $this->fetchIssuesBySeverity($priority);
-			$issues = $this->renderIssuesWithColor($issues);
+			$issuesContent = $this->renderIssuesWithColor($issues);
 
 			$statusName = $this->getSeverityName($priority);
 			$content .= '<div class="column">
@@ -27,8 +27,8 @@ class LikeTrelloSeverity extends LikeTrelloView {
 				style="background-color: white;"
 				>
 				<h2 title="'.$priority.'">' . $statusName .
-				' <small>('.sizeof($issues).')</small></h2>';
-			$content .= implode("\n", $issues);
+				' <small>('.$issues->count.')</small></h2>';
+			$content .= implode("\n", $issuesContent);
 
 //			$content .= $this->queryByPriority[$priority];
 //			$content .= ': '.$this->countByPriority[$priority];
@@ -42,7 +42,11 @@ class LikeTrelloSeverity extends LikeTrelloView {
 		return $this->fetchIssues("severity = $severity");
 	}
 
-	function renderIssuesWithColor(array $issues) {
+	/**
+	 * @param $issues IssueCollection|array
+	 * @return array
+	 */
+	function renderIssuesWithColor($issues) {
 		$content = array();
 		foreach ($issues as $row) {
 			$status = $row['status'];

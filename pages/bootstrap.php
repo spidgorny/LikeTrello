@@ -27,3 +27,4 @@ require_once __DIR__.'/../class/AppController.php';
 require_once __DIR__.'/../class/LikeTrelloView.php';
 require_once __DIR__.'/../class/LikeTrelloPriority.php';
 require_once __DIR__.'/../class/LikeTrelloSeverity.php';
+require_once __DIR__.'/../class/IssueCollection.php';

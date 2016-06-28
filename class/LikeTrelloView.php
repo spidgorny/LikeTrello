@@ -31,15 +31,15 @@ class LikeTrelloView extends AppController {
 
 		foreach ($t_status_array as $status => $statusCode) {
 			$issues = $this->fetchIssuesByStatus($status);
-			$issues = $this->renderIssues($issues);
+			$issuesContent = $this->renderIssues($issues);
 			$statusName = $this->getStatusName($status);
 
 			$content .= '<div class="column">
 				<div class="inside ' . $this->getStatusClass($status) . '"
 				style="background-color: '.$this->getStatusColor($status).'"
 				id="'.$status.'">
-				<h2 title="'.$status.'">' . $statusName . ' ('.sizeof($issues).')</h2>';
-			$content .= implode("\n", $issues);
+				<h2 title="'.$status.'">' . $statusName . ' ('.$issues->count.')</h2>';
+			$content .= implode("\n", $issuesContent);
 			$content .='</div>';  // inside
 			$content .='</div>';  // column
 		}
@@ -61,12 +61,11 @@ class LikeTrelloView extends AppController {
 		return $statusColor;
 	}
 
+	/**
+	 * @param $where
+	 * @return IssueCollection
+	 */
 	function fetchIssues($where) {
-		$t_project_id = helper_get_current_project();
-		$t_bug_table = db_get_table('mantis_bug_table');
-		$t_user_id = auth_get_current_user_id();
-		$specific_where = helper_project_specific_where($t_project_id, $t_user_id);
-
 		if ($this->severity) {
 			$severityCond = '= ' . $this->severity;
 		} else {
@@ -79,27 +78,15 @@ class LikeTrelloView extends AppController {
 			$handlerCond = '> -1';
 		}
 
+		$where .= "
+			AND severity $severityCond
+			AND handler_id $handlerCond";
+
 		if ($this->status) {
 			$where .= ' AND status IN (' . implode(', ', $this->status).')';
 		}
-
-		$query = "SELECT *
-			FROM $t_bug_table
-			WHERE $specific_where
-			AND $where
-			AND severity $severityCond
-			AND handler_id $handlerCond
-			ORDER BY severity DESC, last_updated DESC
-			LIMIT 20";
-//		echo $query, BR; exit();
-		$result = db_query_bound($query);
-		$category_count = db_num_rows($result);
-
-		$issues = [];
-		for ($i = 0; $i < $category_count; $i++) {
-			$row = db_fetch_array($result);
-			$issues[$row['id']] = $row;
-		}
+		$issues = new IssueCollection($where);
+		$issues->perform();
 		return $issues;
 	}
 
@@ -107,7 +94,11 @@ class LikeTrelloView extends AppController {
 		return $this->fetchIssues("status = $status");
 	}
 
-	function renderIssues(array $issues) {
+	/**
+	 * @param $issues IssueCollection|array
+	 * @return array
+	 */
+	function renderIssues($issues) {
 		$content = array();
 		foreach ($issues as $row) {
 			//pre_var_dump($row);
