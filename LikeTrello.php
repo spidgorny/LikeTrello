@@ -45,20 +45,23 @@ class LikeTrelloPlugin extends MantisPlugin {
 	function addMenu($event_name, $param) {
 		//echo __METHOD__, '<br />', PHP_EOL;
 		if (MANTIS_VERSION >= '2.0') {
+			$s_plugin_like_trello_title = plugin_lang_get( 'title' );
+			$s_plugin_like_trello_priority = plugin_lang_get( 'priority' );
+			$s_plugin_like_trello_severity = plugin_lang_get( 'severity' );
 			return [
-				(object) [
-					'href' => plugin_page('trello', true),
-					'name' => $s_plugin_like_trello_title,
+				[
+					'url' => plugin_page('trello', true),
+					'title' => $s_plugin_like_trello_title,
 					'icon' => 'fa-trello',
 				],
-				(object) [
-					'href' => plugin_page('trello-priority', true),
-					'name' => $s_plugin_like_trello_priority,
+				[
+					'url' => plugin_page('trello-priority', true),
+					'title' => $s_plugin_like_trello_priority,
 					'icon' => 'fa-trello',
 				],
-				(object) [
-					'href' => plugin_page('trello-severity', true),
-					'name' => $s_plugin_like_trello_serverity,
+				[
+					'url' => plugin_page('trello-severity', true),
+					'title' => $s_plugin_like_trello_severity,
 					'icon' => 'fa-trello',
 				],
 			];
